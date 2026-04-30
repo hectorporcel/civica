@@ -6,6 +6,8 @@
         unique_key='DNI',
         strategy='check',
         check_cols=['Nombre', 'email']
+        hard_deletes='new_record'
+
     )
 }}
 

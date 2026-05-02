@@ -14,6 +14,6 @@ SELECT
     DNI,
     email,
     fecha_alta_sistema
-FROM {{ source('google_sheets', 'users') }}
+FROM {{ source('GOOGLE_SHEETS', 'users') }}
 
 {% endsnapshot %}

@@ -5,7 +5,7 @@
         target_schema='snapshots',
         unique_key='DNI',
         strategy='check',
-        check_cols=['Nombre', 'email']
+        check_cols=['Nombre', 'email'],
         hard_deletes='new_record'
 
     )
@@ -16,6 +16,6 @@ SELECT
     DNI,
     email,
     fecha_alta_sistema
-FROM {{ source('google_sheets', 'users') }}
+from {{ source('GOOGLE_SHEETS', 'users') }}
 
 {% endsnapshot %}

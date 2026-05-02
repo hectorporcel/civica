@@ -1,6 +1,7 @@
 {{ config(
     materialized='incremental',
-    incremental_strategy='append'
+    unique_key='address_id',
+    incremental_strategy='merge'
 ) }}
 
 WITH source AS (

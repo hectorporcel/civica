@@ -29,9 +29,8 @@ final as (
         orders.address_id,
 
         cast(orders.created_at as timestamp_ntz) as order_date,
-
+        
         orders.status,
-
         addresses.country as address_country,
 
         try_cast(replace(orders.order_total::string, ',', '.') as number(18, 2)) as order_total,

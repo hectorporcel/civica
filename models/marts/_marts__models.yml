@@ -1,97 +1,58 @@
 version: 2
 
 models:
-  - name: dim_orders
-    description: "Dimensión de pedidos. Una fila por pedido."
+  - name: fct_orders
+    description: Hechos de pedidos del e-commerce demo. Una fila por order_id.
+
+    semantic_model:
+      enabled: true
+      name: orders
+
+    agg_time_dimension: order_date
+
     columns:
       - name: order_id
-        description: "Clave única del pedido."
-        tests:
-          - not_null
-          - unique
+        entity:
+          type: primary
+          name: orders          # ojo: 'order' a secas choca con la keyword SQL.
 
       - name: user_id
-        description: "Usuario que realizó el pedido."
-        tests:
-          - not_null
+        entity:
+          type: foreign
+          name: user
 
-      - name: address_id
-        description: "Dirección asociada al pedido."
+      - name: order_date
+        granularity: day
+        dimension:
+          type: time
 
       - name: status
-        description: "Estado del pedido."
+        dimension:
+          type: categorical
 
-      - name: created_at
-        description: "Fecha de creación del pedido."
+      - name: address_country
+        dimension:
+          type: categorical
+          name: country
 
-      - name: updated_at
-        description: "Fecha de actualización del pedido."
+    metrics:
+      - name: total_revenue
+        label: Total revenue
+        type: simple
+        agg: sum
+        expr: order_total
 
-      - name: order_total
-        description: "Importe total del pedido."
+      - name: total_orders
+        label: Total orders
+        type: simple
+        agg: count
+        expr: order_id
 
-      - name: order_cost
-        description: "Coste total del pedido."
-
-      - name: shipping_cost
-        description: "Coste de envío."
-
-  - name: dim_users
-    description: "Dimensión de usuarios. Una fila por usuario."
-    columns:
-      - name: user_id
-        description: "Clave única del usuario."
-        tests:
-          - not_null
-          - unique
-
-      - name: first_name
-        description: "Nombre del usuario."
-
-      - name: last_name
-        description: "Apellido del usuario."
-
-      - name: email
-        description: "Email del usuario."
-
-      - name: phone_number
-        description: "Teléfono del usuario."
-
-      - name: created_at
-        description: "Fecha de creación del usuario."
-
-      - name: updated_at
-        description: "Fecha de actualización del usuario."
-
-  - name: dim_addresses
-    description: "Dimensión de direcciones. Una fila por dirección."
-    columns:
-      - name: address_id
-        description: "Clave única de la dirección."
-        tests:
-          - not_null
-          - unique
-
-      - name: user_id
-        description: "Usuario asociado a la dirección."
-
-      - name: address
-        description: "Dirección."
-
-      - name: zipcode
-        description: "Código postal."
-
-      - name: state
-        description: "Estado o provincia."
-
-      - name: country
-        description: "País."
-
-      - name: created_at
-        description: "Fecha de creación de la dirección."
-
-      - name: updated_at
-        description: "Fecha de actualización de la dirección."
+      - name: total_unique_buyers
+        label: Total unique buyers
+        type: simple
+        agg: count_distinct
+        expr: user_id
 
   - name: dim_time
     description: "Spine temporal diaria para MetricFlow."
@@ -100,68 +61,4 @@ models:
     columns:
       - name: date_day
         description: "Día calendario."
-        granularity: day
-
-  - name: fct_orders
-    description: "Tabla de hechos de pedidos. Una fila por order_id."
-    semantic_model:
-      enabled: true
-      name: orders
-      defaults:
-        agg_time_dimension: order_date
-
-    columns:
-      - name: order_id
-        description: "Clave primaria del pedido."
-        tests:
-          - not_null
-          - unique
-        entity:
-          type: primary
-          name: orders
-
-      - name: user_id
-        description: "Clave foránea al usuario."
-        tests:
-          - not_null
-        entity:
-          type: foreign
-          name: user
-
-      - name: address_id
-        description: "Clave foránea a la dirección de envío."
-        entity:
-          type: foreign
-          name: address
-
-      - name: order_date
-        description: "Fecha del pedido."
-        granularity: day
-        dimension:
-          type: time
-
-      - name: status
-        description: "Estado del pedido."
-        dimension:
-          type: categorical
-
-      - name: address_country
-        description: "País de envío."
-        dimension:
-          type: categorical
-          name: country
-
-      - name: order_total
-        description: "Importe total del pedido."
-        measure:
-          type: sum
-
-      - name: order_cost
-        description: "Coste total del pedido."
-        measure:
-          type: sum
-
-      - name: shipping_cost
-        description: "Coste de envío."
-        measure:
-          type: sum
+        granularity: day   

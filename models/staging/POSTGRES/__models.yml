@@ -1,6 +1,7 @@
 version: 2
 
 models:
+
   - name: stg_POSTGRES_PRODUCTS # Nombre del modelo, aqui va el stg_POSTGRES_PRODUCTS
     config: 
       contract:          #Contratos, caracteristicas que hay que cumplir

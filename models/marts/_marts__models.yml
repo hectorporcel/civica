@@ -1,57 +1,153 @@
 version: 2
 
 models:
-  - name: fct_orders
-    description: Hechos de pedidos del e-commerce demo. Una fila por order_id.
-
-    semantic_model:
-      enabled: true
-      name: orders
-
-    agg_time_dimension: order_date
-
+  - name: dim_orders
+    description: "Dimensión de pedidos. Una fila por pedido."
     columns:
       - name: order_id
-        entity:
-          type: primary
-          name: orders          # ojo: 'order' a secas choca con la keyword SQL.
+        description: "Clave única del pedido."
+        tests:
+          - not_null
+          - unique
 
       - name: user_id
-        entity:
-          type: foreign
-          name: user
+        description: "Usuario que realizó el pedido."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_users')
+              field: user_id
 
-      - name: order_date
-        granularity: day
-        dimension:
-          type: time
+      - name: address_id
+        description: "Dirección asociada al pedido."
+        tests:
+          - relationships:
+              to: ref('dim_addresses')
+              field: address_id
 
       - name: status
-        dimension:
-          type: categorical
+        description: "Estado del pedido."
+        tests:
+          - accepted_values:
+              values: ['pending', 'preparing', 'shipped', 'delivered', 'cancelled']
+
+      - name: created_at
+        description: "Fecha de creación del pedido."
+
+      - name: updated_at
+        description: "Fecha de actualización del pedido."
+
+      - name: order_total
+        description: "Importe total del pedido."
+
+      - name: order_cost
+        description: "Coste total del pedido."
+
+      - name: shipping_cost
+        description: "Coste de envío."
+
+  - name: dim_users
+    description: "Dimensión de usuarios. Una fila por usuario."
+    columns:
+      - name: user_id
+        description: "Clave única del usuario."
+        tests:
+          - not_null
+          - unique
+
+      - name: address_id
+        description: "Dirección asociada al usuario."
+        tests:
+          - relationships:
+              to: ref('dim_addresses')
+              field: address_id
+
+      - name: first_name
+        description: "Nombre del usuario."
+
+      - name: last_name
+        description: "Apellido del usuario."
+
+      - name: email
+        description: "Email del usuario."
+        tests:
+          - not_null
+          - unique
+
+      - name: phone_number
+        description: "Teléfono del usuario."
+
+      - name: created_at
+        description: "Fecha de creación del usuario."
+
+      - name: updated_at
+        description: "Fecha de actualización del usuario."
+
+  - name: dim_addresses
+    description: "Dimensión de direcciones. Una fila por dirección."
+    columns:
+      - name: address_id
+        description: "Clave única de la dirección."
+        tests:
+          - not_null
+          - unique
+
+      - name: address
+        description: "Dirección."
+
+      - name: zipcode
+        description: "Código postal."
+
+      - name: state
+        description: "Estado o provincia."
+
+      - name: country
+        description: "País."
+
+  - name: fct_orders
+    description: "Tabla de hechos de pedidos. Una fila por order_id."
+    columns:
+      - name: order_id
+        description: "Clave primaria del pedido."
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('dim_orders')
+              field: order_id
+
+      - name: user_id
+        description: "Clave foránea al usuario."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_users')
+              field: user_id
+
+      - name: address_id
+        description: "Clave foránea a la dirección de envío."
+        tests:
+          - relationships:
+              to: ref('dim_addresses')
+              field: address_id
+
+      - name: order_date
+        description: "Fecha del pedido."
+
+      - name: status
+        description: "Estado del pedido."
+        tests:
+          - accepted_values:
+              values: ['pending', 'preparing', 'shipped', 'delivered', 'cancelled']
 
       - name: address_country
-        dimension:
-          type: categorical
-          name: country
+        description: "País de envío."
 
-    metrics:
-      - name: total_revenue
-        label: Total revenue
-        type: simple
-        agg: sum
-        expr: order_total
+      - name: order_total
+        description: "Importe total del pedido."
 
-      - name: total_orders
-        label: Total orders
-        type: simple
-        agg: count
-        expr: order_id
+      - name: order_cost
+        description: "Coste total del pedido."
 
-      - name: total_unique_buyers
-        label: Total unique buyers
-        type: simple
-        agg: count_distinct
-        expr: user_id
-
-  
+      - name: shipping_cost
+        description: "Coste de envío."

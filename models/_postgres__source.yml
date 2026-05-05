@@ -9,10 +9,12 @@ sources:
       database: false
       schema: false
       identifier: false 
+
     config:   
       freshness:
         warn_after: {count: 24, period: hour}
         error_after: {count: 48, period: hour} 
+      loaded_at_field: _FIVETRAN_SYNCED
 
     tables:
       
@@ -82,8 +84,4 @@ sources:
           - name: STATUS
           - name: _FIVETRAN_DELETED
           - name: _FIVETRAN_SYNCED
-        
-        
-
       
-          

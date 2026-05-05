@@ -54,11 +54,4 @@ models:
         agg: count_distinct
         expr: user_id
 
-  - name: dim_time
-    description: "Spine temporal diaria para MetricFlow."
-    time_spine:
-      standard_granularity_column: date_day
-    columns:
-      - name: date_day
-        description: "Día calendario."
-        granularity: day   
+  

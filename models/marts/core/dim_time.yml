@@ -1,0 +1,12 @@
+version: 2                                              # Versión de sintaxis de dbt
+
+models:                                                 # Bloque de modelos de dbt
+  - name: dim_time                                      # Nombre físico de tu tabla de fechas en Snowflake
+    description: "Espina temporal diaria para que MetricFlow pueda calcular series de tiempo."
+    
+    time_spine:                                         # Esta es la parte clave para MetricFlow
+      standard_granularity_column: date_day             # Indica cuál es la columna que marca el paso de los días
+    
+    columns:
+      - name: date_day                                  # Nombre de la columna de fecha
+        granularity: day                                # Define que cada fila de esta tabla representa un día exacto.
